@@ -157,7 +157,6 @@ typedef enum {
 } prog_state_t;
 
 // 芯片信息
-static void config_save(system_config_t *config);
 typedef struct {
     char name[32];
     uint16_t device_id;
@@ -247,7 +246,7 @@ typedef struct {
     uint8_t read_buffer[MAX_FILE_SIZE];
     uint32_t read_size;
 } programmer_state_t;
-
+static void config_save(system_config_t *config);
 // 菜单状态
 typedef struct {
     menu_id_t current_menu;
