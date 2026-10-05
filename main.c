@@ -216,7 +216,7 @@ typedef struct {
 // 烧录器状态
 typedef struct {
     system_config_t config;
-    
+static void config_save(system_config_t *config);
     // 芯片状态
     chip_info_t detected_chip;
     chip_info_t selected_chip;
@@ -2718,7 +2718,6 @@ static void menu_process(menu_state_t *menu, key_event_t key, programmer_state_t
 //=============================================================================
 
 #define CONFIG_MAGIC 0x53544D50  // "STMP"
-static void config_save(system_config_t *config);
 // 加载配置
 static void config_load(system_config_t *config) {
     config->magic = CONFIG_MAGIC;
