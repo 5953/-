@@ -1,0 +1,41 @@
+name: Build RP2040 Firmware
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y cmake gcc-arm-none-eabi libnewlib-arm-none-eabi build-essential
+
+      - name: Download Pico SDK
+        run: |
+          git clone --depth 1 https://github.com/raspberrypi/pico-sdk.git
+          cd pico-sdk
+          git submodule update --init
+
+      - name: Configure
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DPICO_SDK_PATH=$GITHUB_WORKSPACE/pico-sdk
+
+      - name: Build
+        run: |
+          cd build
+          make -j2
+
+      - name: Upload UF2
+        uses: actions/upload-artifact@v4
+        with:
+          name: RP2040-Firmware
+          path: build/*.uf2
