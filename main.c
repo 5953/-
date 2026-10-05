@@ -41,10 +41,10 @@
 // GPIO定义
 #define PIN_OLED_SCL    29
 #define PIN_OLED_SDA    28
-#define PIN_KEY1        27  // 上
-#define PIN_KEY2        26  // 下
-#define PIN_KEY3        15  // 确认
-#define PIN_KEY4        14  // 返回
+#define PIN_KEY1        15  // 上
+#define PIN_KEY2        14  // 下
+#define PIN_KEY3        27  // 确认
+#define PIN_KEY4        26  // 返回
 #define PIN_SWIM_SWDIO  2
 #define PIN_SWCLK       3
 #define PIN_NRST        4
@@ -58,7 +58,7 @@
 #define MAX_FIRMWARE_FILES  32
 #define MAX_BACKUP_FILES    16
 #define MAX_FILENAME_LEN    64
-#define MAX_FILE_SIZE       (32 * 1024)  // 512KB
+#define MAX_FILE_SIZE       (8 * 1024)  // 512KB
 
 // 芯片数据库
 #define MAX_CHIP_DB         64
