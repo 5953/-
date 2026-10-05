@@ -157,6 +157,7 @@ typedef enum {
 } prog_state_t;
 
 // 芯片信息
+static void config_save(system_config_t *config);
 typedef struct {
     char name[32];
     uint16_t device_id;
@@ -216,7 +217,7 @@ typedef struct {
 // 烧录器状态
 typedef struct {
     system_config_t config;
-static void config_save(system_config_t *config);
+
     // 芯片状态
     chip_info_t detected_chip;
     chip_info_t selected_chip;
