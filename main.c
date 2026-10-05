@@ -58,7 +58,7 @@
 #define MAX_FIRMWARE_FILES  32
 #define MAX_BACKUP_FILES    16
 #define MAX_FILENAME_LEN    64
-#define MAX_FILE_SIZE       (512 * 1024)  // 512KB
+#define MAX_FILE_SIZE       (32 * 1024)  // 512KB
 
 // 芯片数据库
 #define MAX_CHIP_DB         64
