@@ -2718,7 +2718,7 @@ static void menu_process(menu_state_t *menu, key_event_t key, programmer_state_t
 //=============================================================================
 
 #define CONFIG_MAGIC 0x53544D50  // "STMP"
-
+static void config_save(system_config_t *config);
 // 加载配置
 static void config_load(system_config_t *config) {
     config->magic = CONFIG_MAGIC;
