@@ -22,6 +22,8 @@ jobs:
           git clone --depth 1 https://github.com/raspberrypi/pico-sdk.git
           cd pico-sdk
           git submodule update --init
+          cd ..
+          cp pico-sdk/external/pico_sdk_import.cmake .
 
       - name: Configure
         run: |
