@@ -8,62 +8,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. 添加缓存步骤
+      # 1. 获取代码
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. 设置缓存
-      - name: Set up cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/pico-sdk
-            ~/.cache/pico-sdk
-            build
-          key: ${{ runner.os }}-pico-sdk-${{ hashFiles('**/CMakeLists.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pico-sdk-
-            ${{ runner.os }}-
-
-      # 3. 安装编译工具（只在缓存未命中时执行）
-      - name: Install dependencies
-        if: cache-hit != 'true'
-        run: |
-          sudo apt update
-          sudo apt install -y \
-            cmake \
-            ninja-build \
-            gcc-arm-none-eabi \
-            libnewlib-arm-none-eabi \
-            build-essential \
-            git
-
-      # 4. 下载 Raspberry Pi Pico SDK（只在缓存未命中时执行）
+      # 2. 下载 Pico SDK
       - name: Download Pico SDK
-        if: cache-hit != 'true'
         run: |
-          git clone --depth 1 https://github.com/raspberrypi/pico-sdk.git ~/pico-sdk
-          cd ~/pico-sdk
+          git clone --depth 1 https://github.com/raspberrypi/pico-sdk.git
+          cd pico-sdk
           git submodule update --init --depth 1
 
-      # 5. 准备 Pico SDK 导入文件
+      # 3. 准备 SDK 导入文件
       - name: Prepare Pico SDK
         run: |
-          cp ~/pico-sdk/external/pico_sdk_import.cmake .
+          cp pico-sdk/external/pico_sdk_import.cmake .
 
-      # 6. 配置 CMake
+      # 4. 配置 CMake
       - name: Configure
         run: |
           cmake -S . -B build \
-            -DPICO_SDK_PATH=~/pico-sdk \
+            -DPICO_SDK_PATH=$GITHUB_WORKSPACE/pico-sdk \
             -DCMAKE_BUILD_TYPE=Release
 
-      # 7. 编译（使用并行编译）
+      # 5. 编译
       - name: Build
         run: |
           cmake --build build --parallel 4 --verbose
 
-      # 8. 显示生成的文件
+      # 6. 显示生成的文件
       - name: List build files
         run: |
           echo "===== Build output ====="
@@ -71,15 +44,7 @@ jobs:
             \( -name "*.uf2" -o -name "*.bin" -o -name "*.hex" -o -name "*.elf" \) \
             -print
 
-      # 9. 上传 UF2
-      - name: Upload UF2
-        uses: actions/upload-artifact@v4
-        with:
-          name: stm_programmer-uf2
-          path: build/*.uf2
-          if-no-files-found: error
-
-      # 10. 上传其他固件文件
+      # 7. 上传文件
       - name: Upload firmware files
         uses: actions/upload-artifact@v4
         with:
