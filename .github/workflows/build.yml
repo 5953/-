@@ -27,7 +27,7 @@ jobs:
 
       # 3. 安装编译工具（只在缓存未命中时执行）
       - name: Install dependencies
-        if: cache-hit != 'true'
+        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           sudo apt update
           sudo apt install -y \
@@ -42,7 +42,7 @@ jobs:
 
       # 4. 下载 Pico SDK（只在缓存未命中时执行）
       - name: Download Pico SDK
-        if: cache-hit != 'true'
+        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           git clone --depth 1 https://github.com/raspberrypi/pico-sdk.git ~/pico-sdk
           cd ~/pico-sdk
