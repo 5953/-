@@ -34,7 +34,7 @@ extern void oled_draw_rect(int x, int y, int w, int h, bool fill);
 // 芯片数据库初始化
 //=============================================================================
 
-static void chip_db_init(void) {
+void chip_db_init(void) {
     g_chip_db_count = 0;
     
     // STM8系列
@@ -69,7 +69,7 @@ static void chip_db_init(void) {
     }
 }
 
-static chip_info_t* chip_db_find_by_id(uint16_t device_id, chip_type_t type) {
+chip_info_t* chip_db_find_by_id(uint16_t device_id, chip_type_t type) {
     for (int i = 0; i < g_chip_db_count; i++) {
         if (g_chip_db[i].type == type && g_chip_db[i].valid) {
             if ((device_id & g_chip_db[i].id_mask) == g_chip_db[i].device_id) {
@@ -703,7 +703,7 @@ parse_done:
 // 芯片检测和烧录
 //=============================================================================
 
-static bool programmer_detect_chip(chip_type_t *type, uint16_t *device_id) {
+bool programmer_detect_chip(chip_type_t *type, uint16_t *device_id) {
     if (swim_read_device_id(device_id)) {
         *type = CHIP_TYPE_STM8;
         return true;
@@ -737,7 +737,7 @@ static bool programmer_stability_check(chip_type_t *detected_type, uint16_t *dev
     return true;
 }
 
-static bool programmer_auto_detect(programmer_state_t *state) {
+bool programmer_auto_detect(programmer_state_t *state) {
     chip_type_t type;
     uint16_t device_id;
     
@@ -777,7 +777,7 @@ static bool programmer_auto_detect(programmer_state_t *state) {
     return false;
 }
 
-static bool programmer_erase_chip(programmer_state_t *state) {
+bool programmer_erase_chip(programmer_state_t *state) {
     if (state->detected_chip.type == CHIP_TYPE_STM8) {
         return swim_erase_chip();
     } else if (state->detected_chip.type == CHIP_TYPE_STM32) {
@@ -918,7 +918,7 @@ static bool programmer_verify_flash(programmer_state_t *state,
 
 static fs_header_t g_fs_header = {0};
 
-static bool fs_init(void) {
+bool fs_init(void) {
     const uint8_t *flash_fs = (const uint8_t *)(XIP_BASE + FILESYSTEM_OFFSET);
     memcpy(&g_fs_header, flash_fs, sizeof(fs_header_t));
     
@@ -942,7 +942,7 @@ static bool fs_save_header(void) {
     return true;
 }
 
-static bool fs_list_files(file_info_t *files, int *count, int max_count) {
+bool fs_list_files(file_info_t *files, int *count, int max_count) {
     *count = 0;
     for (int i = 0; i < g_fs_header.entry_count && *count < max_count; i++) {
         if (g_fs_header.entries[i].valid) {
@@ -957,7 +957,7 @@ static bool fs_list_files(file_info_t *files, int *count, int max_count) {
     return true;
 }
 
-static bool fs_read_file(const char *filename, uint8_t **buffer, uint32_t *size) {
+bool fs_read_file(const char *filename, uint8_t **buffer, uint32_t *size) {
     for (int i = 0; i < g_fs_header.entry_count; i++) {
         if (g_fs_header.entries[i].valid && 
             strcmp(g_fs_header.entries[i].filename, filename) == 0) {
@@ -976,7 +976,7 @@ static bool fs_read_file(const char *filename, uint8_t **buffer, uint32_t *size)
     return false;
 }
 
-static bool fs_write_file(const char *filename, const uint8_t *data, 
+bool fs_write_file(const char *filename, const uint8_t *data, 
                          uint32_t size, file_type_t type) {
     if (g_fs_header.entry_count >= MAX_FILES) {
         return false;
@@ -1009,7 +1009,7 @@ static bool fs_write_file(const char *filename, const uint8_t *data,
     return fs_save_header();
 }
 
-static bool fs_delete_file(const char *filename) {
+bool fs_delete_file(const char *filename) {
     for (int i = 0; i < g_fs_header.entry_count; i++) {
         if (g_fs_header.entries[i].valid && 
             strcmp(g_fs_header.entries[i].filename, filename) == 0) {
