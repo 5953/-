@@ -454,8 +454,8 @@ static bool system_init(void) {
     }
     
     oled_clear();
-    oled_show_string(30, 20, "STM烧录器");
-    oled_show_string(30, 35, "初始化中...");
+    oled_show_string(30, 20, "STM 烧录器");
+    oled_show_string(30, 35, "初始化中....");
     oled_refresh();
     
     crc32_init();
