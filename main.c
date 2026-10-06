@@ -186,34 +186,33 @@ static void oled_show_char(int x, int y, char c) {
 static int oled_show_chinese(int x, int y, uint16_t unicode) {
     uint8_t font_data[24];
     
+    // 获取字模数据
     if (!font_get_chinese(unicode, font_data)) {
-        // 未找到，显示方框
         oled_draw_rect(x, y, 12, 12, false);
         return 12;
     }
     
-    // 12x12点阵，每行2字节，共12行
+    // 逐行渲染 12x12 点阵
     for (int row = 0; row < 12; row++) {
-        uint8_t byte1 = font_data[row * 2];      // 高字节
-        uint8_t byte2 = font_data[row * 2 + 1];  // 低字节
+        uint8_t byte1 = font_data[row * 2];     // 左侧 8 行像素
+        uint8_t byte2 = font_data[row * 2 + 1]; // 右侧 4 行像素
         
-        // 高字节的8位
+        // 渲染左半部分 (前8列)
         for (int bit = 0; bit < 8; bit++) {
-            if (byte1 & (0x80 >> bit)) {
-                oled_draw_pixel(x + bit, y + row, true);
-            }
+            bool pixel = (byte1 & (0x80 >> bit)) != 0;
+            oled_draw_pixel(x + bit, y + row, pixel);
         }
         
-        // 低字节的4位（12x12只用到低字节的高4位）
+        // 渲染右半部分 (后4列)
         for (int bit = 0; bit < 4; bit++) {
-            if (byte2 & (0x80 >> bit)) {
-                oled_draw_pixel(x + 8 + bit, y + row, true);
-            }
+            bool pixel = (byte2 & (0x80 >> bit)) != 0;
+            oled_draw_pixel(x + 8 + bit, y + row, pixel);
         }
     }
     
     return 12;
 }
+
 
 void oled_show_string(int x, int y, const char *str) {
     int pos_x = x;
