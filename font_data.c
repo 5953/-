@@ -2,10 +2,10 @@
 #include "stm_programmer.h"
 
 // 结构体定义 (如果你已经在 font_data.h 中定义了它，请将这几行注释掉)
-typedef struct {
-    unsigned short unicode;  // Unicode 编码
-    unsigned char data[24];  // 12x12点阵数据 (24字节)
-} chinese_font_12x12_t;
+// typedef struct {
+//     unsigned short unicode;  // Unicode 编码
+//     unsigned char data[24];  // 12x12点阵数据 (24字节)
+// } chinese_font_12x12_t;
 
 // 汉字字库（已严格按 Unicode 编码从小到大升序排列，二分查找必备）
 static const chinese_font_12x12_t chinese_font_table[] = {
