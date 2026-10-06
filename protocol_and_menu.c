@@ -1995,16 +1995,3 @@ static void main_loop(void) {
 // 主函数
 //=============================================================================
 
-int main(void) {
-    hardware_init();
-    
-    if (!system_init()) {
-        while (1) {
-            sleep_ms(1000);
-        }
-    }
-    
-    main_loop();
-    
-    return 0;
-}
