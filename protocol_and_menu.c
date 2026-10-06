@@ -1023,7 +1023,7 @@ bool fs_delete_file(const char *filename) {
 // 完整烧录流程
 //=============================================================================
 
-static bool programmer_full_process(programmer_state_t *state, const char *firmware_file) {
+bool programmer_full_process(programmer_state_t *state, const char *firmware_file) {
     state->error_code = ERR_OK;
     state->prog_progress = 0;
     state->prog_total = 100;
