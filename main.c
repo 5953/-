@@ -453,10 +453,18 @@ static bool system_init(void) {
     }
     
     oled_clear();
-    oled_show_string(30, 20, "STM烧录器");
-    oled_show_string(30, 35, "初始化中...");
-    oled_refresh();
     
+    // 测试英文
+    oled_show_string(0, 0, "English OK");
+    
+    // 测试汉字"开"
+    oled_show_string(0, 20, "kai:");
+    oled_show_string(30, 20, "开");  // 这里显示"开"字
+    
+    oled_refresh();
+    sleep_ms(5000);  // 停留5秒观察
+    
+    // 下面是你原来的初始化代码...
     crc32_init();
     keys_init();
     chip_db_init();
@@ -466,14 +474,39 @@ static bool system_init(void) {
         config_save(&g_state.config);
     }
     
-    // 这里应该有文件系统初始化，暂时跳过
     g_state.file_count = 0;
     
     menu_system_init();
     
-    sleep_ms(1000);
     return true;
 }
+// static bool system_init(void) {
+//     if (!oled_init()) {
+//         return false;
+//     }
+    
+//     oled_clear();
+//     oled_show_string(30, 20, "STM烧录器");
+//     oled_show_string(30, 35, "初始化中...");
+//     oled_refresh();
+    
+//     crc32_init();
+//     keys_init();
+//     chip_db_init();
+    
+//     if (!config_load(&g_state.config)) {
+//         config_set_default(&g_state.config);
+//         config_save(&g_state.config);
+//     }
+    
+//     // 这里应该有文件系统初始化，暂时跳过
+//     g_state.file_count = 0;
+    
+//     menu_system_init();
+    
+//     sleep_ms(1000);
+//     return true;
+// }
 
 //=============================================================================
 // 主循环
