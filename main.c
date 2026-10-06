@@ -157,26 +157,7 @@ void oled_draw_pixel(int x, int y, bool on) {
     }
 }
 
-/* 直接按 Unicode 数组绘制中英混合字符串（彻底免疫编译器文件编码问题） */
-void oled_show_unicode_string(int x, int y, const uint16_t *unicode_str) {
-    int pos_x = x;
-    
-    while (*unicode_str && pos_x < OLED_WIDTH) {
-        uint16_t code = *unicode_str;
-        
-        // 如果是 ASCII 字符 (如 'S', 'T', 'M', '.')
-        if (code < 0x80) {
-            oled_show_char(pos_x, y + 4, (char)code);
-            pos_x += 6;
-        } 
-        // 如果是汉字
-        else {
-            int width = oled_show_chinese(pos_x, y, code);
-            pos_x += width;
-        }
-        unicode_str++;
-    }
-}
+
 
 
 
@@ -487,6 +468,26 @@ static void hardware_init(void) {
 }
 
 //=============================================================================
+//* 直接按 Unicode 数组绘制中英混合字符串（彻底免疫编译器文件编码问题） */
+void oled_show_unicode_string(int x, int y, const uint16_t *unicode_str) {
+    int pos_x = x;
+    
+    while (*unicode_str && pos_x < OLED_WIDTH) {
+        uint16_t code = *unicode_str;
+        
+        // 如果是 ASCII 字符 (如 'S', 'T', 'M', '.')
+        if (code < 0x80) {
+            oled_show_char(pos_x, y + 4, (char)code);
+            pos_x += 6;
+        } 
+        // 如果是汉字
+        else {
+            int width = oled_show_chinese(pos_x, y, code);
+            pos_x += width;
+        }
+        unicode_str++;
+    }
+}
 // 系统初始化
 //=============================================================================
 
