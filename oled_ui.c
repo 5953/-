@@ -69,7 +69,7 @@ void oled_ui_refresh(void) {
 }
 
 // 像素操作
-static void oled_draw_pixel(int x, int y, bool on) {
+void oled_draw_pixel(int x, int y, bool on) {
     if (x < 0 || x >= OLED_WIDTH || y < 0 || y >= OLED_HEIGHT) return;
     
     int page = y / 8;
