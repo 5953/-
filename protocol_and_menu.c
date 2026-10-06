@@ -587,13 +587,7 @@ static bool stm32_mass_erase(void) {
 // Intel HEX解析
 //=============================================================================
 
-typedef struct {
-    uint8_t type;
-    uint16_t addr;
-    uint8_t count;
-    uint8_t data[256];
-    uint32_t ext_addr;
-} hex_record_t;
+
 
 static bool hex_parse_line(const char *line, hex_record_t *record) {
     if (line[0] != ':') return false;
@@ -918,22 +912,6 @@ static bool programmer_verify_flash(programmer_state_t *state,
 // 文件系统（简化实现）
 //=============================================================================
 
-typedef struct {
-    char filename[MAX_FILENAME_LEN];
-    uint32_t offset;
-    uint32_t size;
-    uint32_t timestamp;
-    file_type_t type;
-    bool valid;
-} fs_entry_t;
-
-typedef struct {
-    uint32_t magic;
-    uint32_t version;
-    uint32_t entry_count;
-    uint32_t next_offset;
-    fs_entry_t entries[MAX_FILES];
-} fs_header_t;
 
 #define FS_MAGIC 0x5354464C
 #define FS_BLOCK_SIZE 4096
