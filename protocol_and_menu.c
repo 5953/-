@@ -1,5 +1,6 @@
 // protocol_and_menu.c - 协议实现和完整菜单系统
 // 接续 stm_programmer_main.c
+#include "stm_programmer.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
