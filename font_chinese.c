@@ -1,5 +1,6 @@
 #include "font_chinese.h"
-
+#include <string.h>
+#include <stdbool.h>
 typedef struct {
     uint16_t unicode;
     uint8_t data[24];  // 12x12点阵，每行2字节
