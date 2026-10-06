@@ -277,7 +277,7 @@ static bool key_read(int pin) {
 key_event_t keys_scan(void) {
     uint32_t now = to_ms_since_boot(get_absolute_time());
     const int pins[] = {PIN_KEY1, PIN_KEY2, PIN_KEY3, PIN_KEY4};
-    const key_event_t events[] = { KEY_OK, KEY_BACK,KEY_UP, KEY_DOWN};
+    const key_event_t events[] = { KEY_BACK, KEY_OK,KEY_DOWN, KEY_UP};
     
     for (int i = 0; i < 4; i++) {
         bool current = key_read(pins[i]);
