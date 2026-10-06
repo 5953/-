@@ -495,18 +495,15 @@ static bool system_init(void) {
         return false;
     }
     
-    // 第一行：“STM烧录器”
-static const uint16_t text_title[] = { 'S', 'T', 'M', 0x70E7, 0x5F55, 0x5668, 0 }; 
+    // 定义 Unicode 码点（彻底避开 C 文件编码造成的乱码问题）
+    static const uint16_t text_title[] = { 'S', 'T', 'M', ' ', 0x70E7, 0x5F55, 0x5668, 0 }; // STM 烧录器
+    static const uint16_t text_init[]  = { 0x521D, 0x5316, 0x59CB, 0x4E2D, '.', '.', '.', '.', 0 }; // 初始化中....
 
-// 第二行：“初始化中...”
-static const uint16_t text_init[]  = { 0x521D, 0x5316, 0x59CB, 0x4E2D, '.', '.', '.', 0 };
-
-void display_init_screen(void) {
     oled_clear();
-    oled_show_unicode_string(10, 10, text_title); // STM烧录器
-    oled_show_unicode_string(10, 32, text_init);  // 初始化中...
+    // 使用 Unicode 数组绘制，坐标 Y 轴调整为 10 和 32，防止 16x16 字体上下重叠
+    oled_show_unicode_string(10, 10, text_title);
+    oled_show_unicode_string(10, 32, text_init);
     oled_refresh();
-            }
     
     crc32_init();
     keys_init();
