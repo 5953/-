@@ -30,6 +30,7 @@ target_link_libraries(stm_programmer
     hardware_flash
     hardware_sync
     hardware_clocks
+    pico_bootrom
 )
 
 pico_enable_stdio_usb(stm_programmer 1)
