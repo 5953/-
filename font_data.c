@@ -1,6 +1,6 @@
 // font_data.c - 12x12汉字字库
 // 包含程序中使用的所有汉字
-
+#include "stm_programmer.h"
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
