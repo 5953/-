@@ -20,6 +20,17 @@
 #include "hardware/clocks.h"
 #include "pico/time.h"
 
+
+// main.c
+#include "stm_programmer.h"
+
+// 全局变量定义（注意：不是extern）
+programmer_state_t g_state = {0};
+menu_state_t g_menu = {0};
+chip_info_t g_chip_db[MAX_CHIP_DB] = {0};
+int g_chip_db_count = 0;
+uint8_t g_oled_buffer[OLED_WIDTH * OLED_HEIGHT / 8] = {0};
+uint8_t g_stream_buffer[STREAM_BUFFER_SIZE] __attribute__((aligned(4)));
 //=============================================================================
 // 配置定义
 //=============================================================================
