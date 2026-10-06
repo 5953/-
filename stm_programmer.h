@@ -311,6 +311,7 @@ extern firmware_info_t g_firmware_info;
 extern bool font_get_chinese(uint16_t unicode, uint8_t data[24]);
 
 // OLED
+extern bool oled_init(void);
 extern void oled_clear(void);
 extern void oled_refresh(void);
 extern void oled_show_string(int x, int y, const char *str);
@@ -325,6 +326,7 @@ extern void oled_draw_pixel(int x, int y, bool on);
 
 // 按键
 extern key_event_t keys_scan(void);
+extern void keys_init(void);
 
 // 配置
 extern bool config_load(system_config_t *config);
