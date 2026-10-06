@@ -47,7 +47,7 @@ jobs:
       # 6. 编译
       - name: Build
         run: |
-          cmake --build build --parallel 2
+          cmake --build build --parallel 2 --verbose
 
       # 7. 显示生成的文件
       - name: List build files
