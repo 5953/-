@@ -157,6 +157,29 @@ void oled_draw_pixel(int x, int y, bool on) {
     }
 }
 
+/* 直接按 Unicode 数组绘制中英混合字符串（彻底免疫编译器文件编码问题） */
+void oled_show_unicode_string(int x, int y, const uint16_t *unicode_str) {
+    int pos_x = x;
+    
+    while (*unicode_str && pos_x < OLED_WIDTH) {
+        uint16_t code = *unicode_str;
+        
+        // 如果是 ASCII 字符 (如 'S', 'T', 'M', '.')
+        if (code < 0x80) {
+            oled_show_char(pos_x, y + 4, (char)code);
+            pos_x += 6;
+        } 
+        // 如果是汉字
+        else {
+            int width = oled_show_chinese(pos_x, y, code);
+            pos_x += width;
+        }
+        unicode_str++;
+    }
+}
+
+
+
 void oled_draw_hline(int x, int y, int w) {
     for (int i = 0; i < w; i++) oled_draw_pixel(x + i, y, true);
 }
@@ -472,10 +495,18 @@ static bool system_init(void) {
         return false;
     }
     
+    // 第一行：“STM烧录器”
+static const uint16_t text_title[] = { 'S', 'T', 'M', 0x70E7, 0x5F55, 0x5668, 0 }; 
+
+// 第二行：“初始化中...”
+static const uint16_t text_init[]  = { 0x521D, 0x5316, 0x59CB, 0x4E2D, '.', '.', '.', 0 };
+
+void display_init_screen(void) {
     oled_clear();
-    oled_show_string(30, 20, "STM 烧录器");
-    oled_show_string(30, 35, "初始化中....");
+    oled_show_unicode_string(10, 10, text_title); // STM烧录器
+    oled_show_unicode_string(10, 32, text_init);  // 初始化中...
     oled_refresh();
+            }
     
     crc32_init();
     keys_init();
