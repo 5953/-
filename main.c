@@ -106,7 +106,7 @@ static void oled_write_data(uint8_t data) {
     i2c_write_blocking(i2c0, OLED_ADDR, buf, 2, false);
 }
 
-static bool oled_init(void) {
+bool oled_init(void) {
     sleep_ms(100);
     oled_write_cmd(0xAE); oled_write_cmd(0x00); oled_write_cmd(0x10);
     oled_write_cmd(0x40); oled_write_cmd(0xB0); oled_write_cmd(0x81);
@@ -264,7 +264,7 @@ static uint32_t g_key_last_time[4] = {0};
 static bool g_key_last_state[4] = {false};
 static uint32_t g_key_press_time[4] = {0};
 
-static void keys_init(void) {
+void keys_init(void) {
     memset(g_key_last_time, 0, sizeof(g_key_last_time));
     memset(g_key_last_state, 0, sizeof(g_key_last_state));
     memset(g_key_press_time, 0, sizeof(g_key_press_time));
