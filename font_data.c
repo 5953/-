@@ -73,7 +73,7 @@ static const unsigned char font_missing_glyph[24] = {
 };
 
 /* 5. 获取字模函数 */
-const unsigned char* font_get_chinese(unsigned short unicode) {
+bool font_get_chinese(uint16_t unicode, uint8_t data[24]) {
     int left = 0;
     int right = (sizeof(chinese_font_table) / sizeof(chinese_font_table[0])) - 1;
     int mid;
@@ -81,12 +81,17 @@ const unsigned char* font_get_chinese(unsigned short unicode) {
     while (left <= right) {
         mid = left + (right - left) / 2;
         if (chinese_font_table[mid].unicode == unicode) {
-            return chinese_font_table[mid].data;
+            // 找到了，将 24 字节字模数据拷贝到你传入的 data 数组中
+            memcpy(data, chinese_font_table[mid].data, 24);
+            return true; 
         } else if (chinese_font_table[mid].unicode < unicode) {
             left = mid + 1;
         } else {
             right = mid - 1;
         }
     }
-    return font_missing_glyph;
+    
+    // 没找到该汉字，拷贝“缺省字模”（一个方框或者问号，防止乱码）并返回 false
+    memcpy(data, font_missing_glyph, 24);
+    return false;
 }
