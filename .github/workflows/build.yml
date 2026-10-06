@@ -12,31 +12,61 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. 下载 Pico SDK
-      - name: Download Pico SDK
+      # 2. 设置缓存
+      - name: Set up cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/pico-sdk
+            ~/.cache/pico-sdk
+            build
+          key: ${{ runner.os }}-pico-sdk-${{ hashFiles('**/CMakeLists.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pico-sdk-
+            ${{ runner.os }}-
+
+      # 3. 安装编译工具（只在缓存未命中时执行）
+      - name: Install dependencies
+        if: cache-hit != 'true'
         run: |
-          git clone --depth 1 https://github.com/raspberrypi/pico-sdk.git
-          cd pico-sdk
+          sudo apt update
+          sudo apt install -y \
+            cmake \
+            ninja-build \
+            gcc-arm-none-eabi \
+            libnewlib-arm-none-eabi \
+            build-essential \
+            git \
+            python3-pip \
+            python3-setuptools
+
+      # 4. 下载 Pico SDK（只在缓存未命中时执行）
+      - name: Download Pico SDK
+        if: cache-hit != 'true'
+        run: |
+          git clone --depth 1 https://github.com/raspberrypi/pico-sdk.git ~/pico-sdk
+          cd ~/pico-sdk
           git submodule update --init --depth 1
 
-      # 3. 准备 SDK 导入文件
+      # 5. 准备 Pico SDK 导入文件
       - name: Prepare Pico SDK
         run: |
-          cp pico-sdk/external/pico_sdk_import.cmake .
+          cp ~/pico-sdk/external/pico_sdk_import.cmake .
 
-      # 4. 配置 CMake
+      # 6. 配置 CMake
       - name: Configure
         run: |
           cmake -S . -B build \
-            -DPICO_SDK_PATH=$GITHUB_WORKSPACE/pico-sdk \
-            -DCMAKE_BUILD_TYPE=Release
+            -DPICO_SDK_PATH=~/pico-sdk \
+            -DCMAKE_BUILD_TYPE=Release \
+            -G "Unix Makefiles"
 
-      # 5. 编译
+      # 7. 编译
       - name: Build
         run: |
           cmake --build build --parallel 4 --verbose
 
-      # 6. 显示生成的文件
+      # 8. 显示生成的文件
       - name: List build files
         run: |
           echo "===== Build output ====="
@@ -44,7 +74,7 @@ jobs:
             \( -name "*.uf2" -o -name "*.bin" -o -name "*.hex" -o -name "*.elf" \) \
             -print
 
-      # 7. 上传文件
+      # 9. 上传文件
       - name: Upload firmware files
         uses: actions/upload-artifact@v4
         with:
