@@ -2,8 +2,8 @@
 #include <string.h>
 
 // 全局芯片数据库
-static chip_info_t g_chip_db[MAX_CHIP_DB] = {0};
-static int g_chip_db_count = 0;
+chip_info_t g_chip_db[MAX_CHIP_DB] = {0};
+int g_chip_db_count = 0;
 
 void chip_db_init(void) {
     g_chip_db_count = 0;
