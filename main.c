@@ -186,6 +186,7 @@ static void oled_show_char(int x, int y, char c) {
 static int oled_show_chinese(int x, int y, uint16_t unicode) {
     uint8_t font_data[24];
     if (font_get_chinese(unicode, font_data)) {
+        // 12x12汉字，横向取模数据
         for (int row = 0; row < 12; row++) {
             uint16_t line = (font_data[row * 2] << 8) | font_data[row * 2 + 1];
             for (int col = 0; col < 12; col++) {
@@ -196,7 +197,10 @@ static int oled_show_chinese(int x, int y, uint16_t unicode) {
         }
         return 12;
     }
-    return 0;
+    
+    // 未找到字，显示方框
+    oled_draw_rect(x, y, 12, 12, false);
+    return 12;
 }
 
 void oled_show_string(int x, int y, const char *str) {
