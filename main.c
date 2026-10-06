@@ -308,7 +308,7 @@ key_event_t keys_scan(void) {
 static uint32_t crc32_table[256];
 static bool crc32_table_initialized = false;
 
-static void crc32_init(void) {
+void crc32_init(void) {
     if (crc32_table_initialized) return;
     for (uint32_t i = 0; i < 256; i++) {
         uint32_t crc = i;
@@ -324,7 +324,7 @@ static void crc32_init(void) {
     crc32_table_initialized = true;
 }
 
-static uint32_t crc32_calculate(const uint8_t *data, uint32_t len) {
+uint32_t crc32_calculate(const uint8_t *data, uint32_t len) {
     uint32_t crc = 0xFFFFFFFF;
     for (uint32_t i = 0; i < len; i++) {
         uint8_t index = (crc ^ data[i]) & 0xFF;
@@ -339,7 +339,7 @@ static uint32_t crc32_calculate(const uint8_t *data, uint32_t len) {
 #define CONFIG_MAGIC 0x53544D50
 #define CONFIG_VERSION 1
 
-static void config_set_default(system_config_t *config) {
+void config_set_default(system_config_t *config) {
     memset(config, 0, sizeof(system_config_t));
     config->magic = CONFIG_MAGIC;
     config->version = CONFIG_VERSION;
@@ -358,7 +358,7 @@ static void config_set_default(system_config_t *config) {
     config->screen_timeout = 60;
 }
 
-static bool config_load(system_config_t *config) {
+bool config_load(system_config_t *config) {
     const uint8_t *flash_config = (const uint8_t *)(XIP_BASE + CONFIG_OFFSET);
     memcpy(config, flash_config, sizeof(system_config_t));
     
@@ -379,7 +379,7 @@ static bool config_load(system_config_t *config) {
     return true;
 }
 
-static bool config_save(system_config_t *config) {
+bool config_save(system_config_t *config) {
     config->crc32 = 0;
     config->crc32 = crc32_calculate((uint8_t *)config, sizeof(system_config_t));
     uint32_t ints = save_and_disable_interrupts();
