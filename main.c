@@ -76,22 +76,32 @@ static const uint8_t font_6x8[][6] = {
 // UTF-8 和字库
 //=============================================================================
 static uint16_t utf8_to_unicode(const char *utf8, int *bytes) {
-    uint8_t c1 = utf8[0];
+    // 必须强转为无符号 uint8_t，防止 C 语言负数符号扩展破坏位运算！
+    const uint8_t *p = (const uint8_t *)utf8;
+    uint8_t c1 = p[0];
     
+    // 单字节 ASCII (0x00 - 0x7F)
     if ((c1 & 0x80) == 0) {
         *bytes = 1;
         return c1;
-    } else if ((c1 & 0xE0) == 0xC0) {
+    } 
+    // 双字节字符 (0xC0 - 0xDF)
+    else if ((c1 & 0xE0) == 0xC0) {
         *bytes = 2;
-        return ((c1 & 0x1F) << 6) | (utf8[1] & 0x3F);
-    } else if ((c1 & 0xF0) == 0xE0) {
+        return ((uint16_t)(c1 & 0x1F) << 6) | (p[1] & 0x3F);
+    } 
+    // 三字节汉字 (0xE0 - 0xEF) -- 绝大多数 UTF-8 汉字
+    else if ((c1 & 0xF0) == 0xE0) {
         *bytes = 3;
-        return ((c1 & 0x0F) << 12) | ((utf8[1] & 0x3F) << 6) | (utf8[2] & 0x3F);
+        return ((uint16_t)(c1 & 0x0F) << 12) | 
+               ((uint16_t)(p[1] & 0x3F) << 6)  | 
+               (p[2] & 0x3F);
     }
     
     *bytes = 1;
     return 0;
 }
+
 
 //=============================================================================
 // OLED驱动
@@ -219,24 +229,32 @@ static int oled_show_chinese(int x, int y, uint16_t unicode) {
 void oled_show_string(int x, int y, const char *str) {
     int pos_x = x;
     const char *p = str;
+    
     while (*p && pos_x < OLED_WIDTH) {
-        if ((*p & 0x80) == 0) {
-            oled_show_char(pos_x, y, *p);
+        uint8_t c = (uint8_t)*p;
+        
+        // 1. ASCII 字符 (6x8)
+        if (c < 0x80) {
+            oled_show_char(pos_x, y + 4, *p);
             pos_x += 6;
             p++;
-        } else {
-            int bytes;
+        } 
+        // 2. UTF-8 汉字 (16x16)
+        else {
+            int bytes = 0;
             uint16_t unicode = utf8_to_unicode(p, &bytes);
-            int width = oled_show_chinese(pos_x, y, unicode);
-            if (width > 0) {
+            
+            if (bytes > 0) {
+                int width = oled_show_chinese(pos_x, y, unicode);
                 pos_x += width;
+                p += bytes;
             } else {
-                pos_x += 12;
+                p++;
             }
-            p += bytes;
         }
     }
 }
+
 
 void oled_show_number(int x, int y, uint32_t num) {
     char buf[16];
