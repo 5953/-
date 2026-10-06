@@ -1,6 +1,34 @@
 // protocol_and_menu.c - 协议实现和完整菜单系统
 // 接续 stm_programmer_main.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include "pico/stdlib.h"
+#include "hardware/i2c.h"
+#include "hardware/gpio.h"
+#include "hardware/flash.h"
+#include "hardware/sync.h"
 
+// 从main.c导入的外部声明
+extern uint8_t g_oled_buffer[];
+extern chip_info_t g_chip_db[];
+extern int g_chip_db_count;
+extern programmer_state_t g_state;
+extern menu_state_t g_menu;
+extern uint8_t g_stream_buffer[];
+
+// 从main.c导入的函数声明
+extern void oled_clear(void);
+extern void oled_refresh(void);
+extern void oled_show_string(int x, int y, const char *str);
+extern void oled_show_number(int x, int y, uint32_t num);
+extern void oled_show_progress(int x, int y, int w, int h, uint32_t value, uint32_t total);
+extern void oled_show_percent(int x, int y, uint32_t value, uint32_t total);
+extern void oled_show_speed(int x, int y, uint32_t bytes_per_sec);
+extern void oled_draw_hline(int x, int y, int w);
+extern void oled_draw_rect(int x, int y, int w, int h, bool fill);
 //=============================================================================
 // 芯片数据库初始化
 //=============================================================================
