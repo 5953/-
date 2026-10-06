@@ -184,33 +184,35 @@ static void oled_show_char(int x, int y, char c) {
 }
 
 static int oled_show_chinese(int x, int y, uint16_t unicode) {
-    uint8_t font_data[24];
+    uint8_t font_data[32]; // 16x16 汉字占用 32 字节
     
-    // 获取字模数据
+    // 获取字模数据（如果找不到返回 16 宽度）
     if (!font_get_chinese(unicode, font_data)) {
-        oled_draw_rect(x, y, 12, 12, false);
-        return 12;
+        oled_draw_rect(x, y, 16, 16, false);
+        return 16;
     }
     
-    // 逐行渲染 12x12 点阵
-    for (int row = 0; row < 12; row++) {
-        uint8_t byte1 = font_data[row * 2];     // 左侧 8 行像素
-        uint8_t byte2 = font_data[row * 2 + 1]; // 右侧 4 行像素
+    // 逐行渲染 16x16 点阵
+    for (int row = 0; row < 16; row++) {
+        uint8_t byte1 = font_data[row * 2];     // 左侧 8 位
+        uint8_t byte2 = font_data[row * 2 + 1]; // 右侧 8 位
         
-        // 渲染左半部分 (前8列)
+        // 左半部分 (前8列)
         for (int bit = 0; bit < 8; bit++) {
-            bool pixel = (byte1 & (0x80 >> bit)) != 0;
-            oled_draw_pixel(x + bit, y + row, pixel);
+            if (byte1 & (0x80 >> bit)) {
+                oled_draw_pixel(x + bit, y + row, true);
+            }
         }
         
-        // 渲染右半部分 (后4列)
-        for (int bit = 0; bit < 4; bit++) {
-            bool pixel = (byte2 & (0x80 >> bit)) != 0;
-            oled_draw_pixel(x + 8 + bit, y + row, pixel);
+        // 右半部分 (后8列)
+        for (int bit = 0; bit < 8; bit++) {
+            if (byte2 & (0x80 >> bit)) {
+                oled_draw_pixel(x + 8 + bit, y + row, true);
+            }
         }
     }
     
-    return 12;
+    return 16;
 }
 
 
